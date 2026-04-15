@@ -36,7 +36,6 @@
             align-items: center;
             min-height: 100vh;
             padding: 40px 20px;
-            overflow-x: hidden;
         }
 
         @keyframes gradientBG {
@@ -49,9 +48,8 @@
             display: flex;
             justify-content: center;
             width: 100%;
-            max-width: 600px; /* Centered main panel */
+            max-width: 550px; 
             position: relative;
-            z-index: 10;
         }
 
         .glass-panel {
@@ -63,86 +61,81 @@
             border-radius: 24px;
             box-shadow: var(--glass-shadow);
             width: 100%;
-            position: relative;
         }
 
-        h1, h2 {
+        /* Branding */
+        .branding-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .app-logo {
+            width: 50px; /* Adjust size as needed */
+            height: auto;
+            margin-bottom: 10px;
+            border-radius: 8px; /* Optional if logo isn't transparent */
+            display: none; /* Hidden until image loads */
+        }
+
+        h1 {
             font-size: 1.5rem;
             font-weight: 600;
             text-align: center;
             letter-spacing: 1px;
-            margin-bottom: 25px;
             color: var(--text-main);
         }
 
-        /* Top Bar Actions */
-        .top-actions {
-            position: absolute;
-            top: 25px;
-            right: 25px;
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 5px;
+            margin-bottom: 30px;
+            border: 1px solid var(--glass-border);
         }
 
-        .icon-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
+        .tab-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
             color: var(--text-muted);
-            padding: 8px 12px;
-            border-radius: 10px;
+            padding: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 0.8rem;
+            transition: all 0.2s;
             text-transform: uppercase;
             letter-spacing: 1px;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
         }
 
-        .icon-btn:hover {
+        .tab-btn.active {
             background: rgba(255, 255, 255, 0.1);
             color: var(--text-main);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Tab Content Area */
+        .tab-content {
+            display: none;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .tab-content.active { display: block; }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
         }
 
         /* Setup Section */
-        .setup-grid {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 30px;
-            padding-bottom: 25px;
-            border-bottom: 1px solid var(--glass-border);
-            margin-top: 20px;
-        }
-
-        .setup-box {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            align-items: center;
-        }
-
-        .setup-box label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
-
-        input[type="time"], input[type="number"].inline-input {
-            background: transparent;
-            color: var(--text-main);
-            border: none;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            padding: 5px 0;
-            font-size: 1.2rem;
-            font-weight: 500;
-            outline: none;
-            text-align: center;
-            width: 120px;
-            transition: border-color 0.3s;
-        }
-        
+        .setup-grid { display: flex; justify-content: center; gap: 30px; margin-bottom: 30px; padding-bottom: 25px; border-bottom: 1px solid var(--glass-border); }
+        .setup-box { display: flex; flex-direction: column; gap: 5px; align-items: center; }
+        .setup-box label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
+        input[type="time"], input[type="number"].inline-input { background: transparent; color: var(--text-main); border: none; border-bottom: 1px solid rgba(255,255,255,0.2); padding: 5px 0; font-size: 1.2rem; font-weight: 500; outline: none; text-align: center; width: 120px; transition: border-color 0.3s; }
         input[type="time"]:focus, input[type="number"].inline-input:focus { border-bottom-color: var(--accent); }
 
         /* Predictor Box */
@@ -151,212 +144,153 @@
         .sign-off-time { font-size: 4.5rem; font-weight: 700; color: var(--accent); text-shadow: 0 0 35px var(--accent-glow); letter-spacing: -2px; line-height: 1; }
 
         /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 35px; }
-        .stat-card { background: rgba(255, 255, 255, 0.03); padding: 15px 10px; border-radius: 16px; text-align: center; border: 1px solid rgba(255,255,255,0.02); }
-        .stat-title { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-        .stat-value { font-size: 1.25rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 35px; }
+        .stat-card { background: rgba(255, 255, 255, 0.03); padding: 15px 5px; border-radius: 16px; text-align: center; border: 1px solid rgba(255,255,255,0.02); }
+        .stat-title { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .stat-value { font-size: 1.2rem; font-weight: 600; font-variant-numeric: tabular-nums; }
         .text-break { color: var(--break-color); }
         .text-overtime { color: var(--overtime); }
 
         /* Controls */
         .controls { display: flex; gap: 15px; margin-bottom: 15px; }
-        button.main-btn {
-            border: none; padding: 18px; font-size: 1rem; font-weight: 600; border-radius: 14px;
-            cursor: pointer; color: #fff; flex-grow: 1; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s ease;
-        }
+        button.main-btn { border: none; padding: 18px; font-size: 1rem; font-weight: 600; border-radius: 14px; cursor: pointer; color: #fff; flex-grow: 1; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s ease; }
         #actionBtn { background: linear-gradient(135deg, #0ea5e9, #3b82f6); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25); }
         #actionBtn:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(59, 130, 246, 0.35); }
         #actionBtn.on-break { background: linear-gradient(135deg, #f87171, #ef4444); box-shadow: 0 8px 20px rgba(239, 68, 68, 0.25); }
         #resetBtn { background: rgba(255, 255, 255, 0.05); color: var(--text-muted); flex-grow: 0; padding: 18px 25px; }
         #resetBtn:hover { background: rgba(255, 255, 255, 0.1); color: white; }
 
-        /* Progressive Disclosure: Manual Panel */
+        /* Manual Panel */
         .toggle-manual-btn { background: none; border: none; color: var(--text-muted); font-size: 0.85rem; width: 100%; text-align: center; padding: 10px; cursor: pointer; transition: color 0.2s; }
         .toggle-manual-btn:hover { color: var(--text-main); }
-        .manual-panel {
-            background: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 16px; border: 1px solid var(--glass-border);
-            display: none; flex-direction: column; gap: 15px; margin-top: 10px;
-        }
+        .manual-panel { background: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 16px; border: 1px solid var(--glass-border); display: none; flex-direction: column; gap: 15px; margin-top: 10px; }
         .manual-panel.open { display: flex; }
-        .manual-row { display: flex; gap: 12px; align-items: center; }
-        .manual-label { font-size: 0.85rem; color: var(--text-muted); width: 130px; }
+        .manual-row { display: flex; gap: 10px; align-items: center; }
+        .manual-label { font-size: 0.8rem; color: var(--text-muted); width: 120px; }
         .time-input-group { display: flex; gap: 8px; flex-grow: 1; }
         .manual-row input { width: 100%; background: rgba(255,255,255,0.03); color: var(--text-main); border: 1px solid rgba(255,255,255,0.1); padding: 8px; border-radius: 8px; outline: none; text-align: center; }
-        .manual-row button { padding: 8px 15px; font-size: 0.85rem; font-weight: 600; background-color: transparent; border-radius: 8px; cursor: pointer; }
+        .manual-row button { padding: 8px 12px; font-size: 0.8rem; font-weight: 600; background-color: transparent; border-radius: 8px; cursor: pointer; }
         .btn-break { border: 1px solid var(--break-color); color: var(--break-color); }
         .btn-work { border: 1px solid var(--accent); color: var(--accent); }
 
-        /* Slide-out Drawer Overlay */
-        .drawer-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
-            z-index: 99; display: none; opacity: 0; transition: opacity 0.3s ease;
-        }
-        .drawer-overlay.open { display: block; opacity: 1; }
-
-        /* History Drawer Panel */
-        .history-drawer {
-            position: fixed; top: 0; right: -450px; width: 400px; max-width: 100vw; height: 100vh;
-            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border-left: 1px solid var(--glass-border); padding: 35px 25px;
-            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 100;
-            display: flex; flex-direction: column; box-shadow: -15px 0 40px rgba(0,0,0,0.5);
-        }
-        .history-drawer.open { right: 0; }
-        .close-drawer-btn {
-            position: absolute; top: 25px; left: 25px; background: none; border: none;
-            color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: color 0.2s;
-        }
-        .close-drawer-btn:hover { color: white; }
-
-        .history-drawer h2 { margin-top: 10px; color: var(--text-main); margin-bottom: 25px; }
-
-        #historyContainer { overflow-y: auto; flex-grow: 1; margin-bottom: 15px; padding-right: 8px; }
+        /* History Content Area */
+        #historyContainer { max-height: 500px; overflow-y: auto; padding-right: 5px; margin-bottom: 20px; }
         #historyContainer::-webkit-scrollbar { width: 5px; }
         #historyContainer::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
-
-        /* History Items */
-        .history-item { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
-        .history-header { padding: 12px 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s;}
-        .history-header:hover { background: rgba(255,255,255,0.03); }
-        .history-date { font-weight: 500; font-size: 0.9rem; }
-        .history-body { padding: 15px; border-top: 1px solid rgba(255,255,255,0.02); display: none; background: rgba(0,0,0,0.2); }
-        .history-item.active .history-body { display: block; }
         
-        .history-stats { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; font-size: 0.8rem; }
+        .history-item { background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+        .history-header { padding: 12px 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s;}
+        .history-header:hover { background: rgba(255,255,255,0.05); }
+        .history-date { font-weight: 500; font-size: 0.9rem; }
+        .history-body { padding: 15px; border-top: 1px solid rgba(255,255,255,0.02); display: none; background: rgba(0,0,0,0.15); }
+        .history-item.active .history-body { display: block; }
+        .history-stats { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; font-size: 0.75rem; }
         .history-badge { background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px; }
-        .history-notes { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); color: var(--text-main); padding: 10px; border-radius: 8px; min-height: 60px; font-size: 0.85rem; outline: none; transition: border-color 0.2s;}
+        .history-notes { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); color: var(--text-main); padding: 10px; border-radius: 8px; min-height: 60px; font-size: 0.85rem; outline: none; transition: border-color 0.2s;}
         .history-notes:focus { border-color: var(--accent); }
 
-        /* Subdued Data Management */
         .data-mgmt { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; display: flex; justify-content: center; gap: 20px; }
         .btn-data { background: none; border: none; color: var(--text-muted); font-size: 0.75rem; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: color 0.2s; }
         .btn-data:hover { color: var(--text-main); }
 
-        .footer-credit { margin-top: 30px; font-size: 0.75rem; color: rgba(255, 255, 255, 0.3); text-transform: uppercase; letter-spacing: 1px; z-index: 10; }
+        .footer-credit { margin-top: 30px; font-size: 0.75rem; color: rgba(255, 255, 255, 0.3); text-transform: uppercase; letter-spacing: 1px; }
         .footer-credit span { color: var(--accent); font-weight: 600; }
         
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-
-        /* Update Modal Styles */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 40px; border-radius: 24px; max-width: 500px; width: 90%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); text-align: center; }
-        .modal-title { font-size: 1.5rem; color: var(--text-main); margin-bottom: 15px; font-weight: bold; }
-        .modal-version { color: var(--accent); font-size: 1rem; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
-        .modal-body { color: var(--text-muted); text-align: left; margin-bottom: 30px; line-height: 1.6; font-size: 0.95rem; }
-        .modal-body ul { padding-left: 20px; }
-        .modal-body li { margin-bottom: 10px; }
-        .modal-btn { background: var(--accent); color: #fff; border: none; padding: 12px 30px; font-size: 1rem; font-weight: bold; border-radius: 12px; cursor: pointer; transition: background 0.2s; }
-        .modal-btn:hover { background: #0284c7; }
     </style>
 </head>
 <body>
 
-    <div class="modal-overlay" id="updateModal">
-        <div class="modal-content">
-            <div class="modal-title">WorkTracker Updated</div>
-            <div class="modal-version">Version 1.2</div>
-            <div class="modal-body">
-                <ul>
-                    <li><strong>Zen Mode UI:</strong> The main tracker is now perfectly centered to eliminate distractions.</li>
-                    <li><strong>Slide-Out Ledger:</strong> The Shift History is now hidden in a sleek side drawer.</li>
-                    <li><strong>Studio Update:</strong> Official credits updated to <strong>The Lobby</strong>.</li>
-                </ul>
-            </div>
-            <button class="modal-btn" onclick="closeModal()">Got it</button>
-        </div>
-    </div>
-
-    <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
-
     <div class="app-wrapper">
         <div class="glass-panel">
-            <div class="top-actions">
-                <button class="icon-btn" onclick="toggleDrawer()">
-                    📋 History
+            
+            <div class="branding-header">
+                <img src="logo.png" alt="Logo" class="app-logo" onload="this.style.display='block'" onerror="this.style.display='none'">
+                <h1>WorkTracker</h1>
+            </div>
+
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="switchTab('tracker')">⏱️ Tracker</button>
+                <button class="tab-btn" onclick="switchTab('history')">📋 History</button>
+            </div>
+
+            <div id="trackerTab" class="tab-content active">
+                <div class="setup-grid">
+                    <div class="setup-box">
+                        <label>Clock-In Time</label>
+                        <input type="time" id="startTime" onchange="saveDataAndRender()">
+                    </div>
+                    <div class="setup-box">
+                        <label>Planned OT (Hrs)</label>
+                        <input type="number" id="plannedOt" class="inline-input" value="0" min="0" step="0.5" onchange="saveDataAndRender()">
+                    </div>
+                </div>
+
+                <div class="predictor-box">
+                    <div class="predictor-label" id="signOffLabel">Projected End of Shift</div>
+                    <div class="sign-off-time" id="signOffDisplay">--:--</div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-title">Active Work</div>
+                        <div class="stat-value" id="workTimeDisplay">00:00:00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Break Time</div>
+                        <div class="stat-value text-break" id="breakTimeDisplay">00:00:00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Overtime</div>
+                        <div class="stat-value text-overtime" id="overtimeDisplay">00:00:00</div>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button id="actionBtn" class="main-btn" onclick="toggleState()">Start Work</button>
+                    <button id="resetBtn" class="main-btn" onclick="resetApp()">Reset</button>
+                </div>
+
+                <button class="toggle-manual-btn" onclick="document.getElementById('manualPanel').classList.toggle('open')">
+                    ⚙️ Adjust Time Manually
                 </button>
-            </div>
 
-            <h1>WorkTracker</h1>
-
-            <div class="setup-grid">
-                <div class="setup-box">
-                    <label>Clock-In Time</label>
-                    <input type="time" id="startTime" onchange="saveDataAndRender()">
-                </div>
-                <div class="setup-box">
-                    <label>Planned OT (Hrs)</label>
-                    <input type="number" id="plannedOt" class="inline-input" value="0" min="0" step="0.5" onchange="saveDataAndRender()">
-                </div>
-            </div>
-
-            <div class="predictor-box">
-                <div class="predictor-label" id="signOffLabel">Projected End of Shift</div>
-                <div class="sign-off-time" id="signOffDisplay">--:--</div>
-            </div>
-
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-title">Active Work</div>
-                    <div class="stat-value" id="workTimeDisplay">00:00:00</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">Break Time</div>
-                    <div class="stat-value text-break" id="breakTimeDisplay">00:00:00</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">Overtime</div>
-                    <div class="stat-value text-overtime" id="overtimeDisplay">00:00:00</div>
-                </div>
-            </div>
-
-            <div class="controls">
-                <button id="actionBtn" class="main-btn" onclick="toggleState()">Start Work</button>
-                <button id="resetBtn" class="main-btn" onclick="resetApp()">Reset</button>
-            </div>
-
-            <button class="toggle-manual-btn" onclick="document.getElementById('manualPanel').classList.toggle('open')">
-                ⚙️ Adjust Time Manually
-            </button>
-
-            <div class="manual-panel" id="manualPanel">
-                <div class="manual-row">
-                    <span class="manual-label">Log Missed Break:</span>
-                    <div class="time-input-group">
-                        <input type="number" id="manualBreakHr" placeholder="Hrs">
-                        <input type="number" id="manualBreakMin" placeholder="Mins">
+                <div class="manual-panel" id="manualPanel">
+                    <div class="manual-row">
+                        <span class="manual-label">Log Missed Break:</span>
+                        <div class="time-input-group">
+                            <input type="number" id="manualBreakHr" placeholder="Hrs">
+                            <input type="number" id="manualBreakMin" placeholder="Mins">
+                        </div>
+                        <button class="btn-break" onclick="addManualTime('break')">Apply</button>
                     </div>
-                    <button class="btn-break" onclick="addManualTime('break')">Apply</button>
-                </div>
-                <div class="manual-row">
-                    <span class="manual-label">Log Offline Work:</span>
-                    <div class="time-input-group">
-                        <input type="number" id="manualWorkHr" placeholder="Hrs">
-                        <input type="number" id="manualWorkMin" placeholder="Mins">
+                    <div class="manual-row">
+                        <span class="manual-label">Log Offline Work:</span>
+                        <div class="time-input-group">
+                            <input type="number" id="manualWorkHr" placeholder="Hrs">
+                            <input type="number" id="manualWorkMin" placeholder="Mins">
+                        </div>
+                        <button class="btn-work" onclick="addManualTime('work')">Apply</button>
                     </div>
-                    <button class="btn-work" onclick="addManualTime('work')">Apply</button>
                 </div>
             </div>
+
+            <div id="historyTab" class="tab-content">
+                <div id="historyContainer"></div>
+
+                <div class="data-mgmt">
+                    <button class="btn-data" onclick="exportData()">↓ Backup JSON</button>
+                    <button class="btn-data" onclick="document.getElementById('fileInput').click()">↑ Restore JSON</button>
+                    <input type="file" id="fileInput" style="display:none" onchange="importData(event)" accept=".json">
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <div class="history-drawer" id="historyDrawer">
-        <button class="close-drawer-btn" onclick="toggleDrawer()">✕</button>
-        <h2>Shift History</h2>
-        
-        <div id="historyContainer"></div>
-
-        <div class="data-mgmt">
-            <button class="btn-data" onclick="exportData()">↓ Backup JSON</button>
-            <button class="btn-data" onclick="document.getElementById('fileInput').click()">↑ Restore JSON</button>
-            <input type="file" id="fileInput" style="display:none" onchange="importData(event)" accept=".json">
-        </div>
-    </div>
-
-    <div class="footer-credit">App made by <span>The Lobby</span></div>
+    <div class="footer-credit">App made by <span>SirKentC</span></div>
 
     <script>
-        const APP_VERSION = "1.2";
         const BASE_GOAL = 8 * 3600;
         let accumulatedWork = 0, accumulatedBreak = 0, sessionStart = 0, currentState = 'idle', shiftHistory = [];
         let activeInterval = null;
@@ -370,33 +304,15 @@
         const overtimeDisplay = document.getElementById('overtimeDisplay');
         const actionBtn = document.getElementById('actionBtn');
         const historyContainer = document.getElementById('historyContainer');
-        const updateModal = document.getElementById('updateModal');
-        const historyDrawer = document.getElementById('historyDrawer');
-        const drawerOverlay = document.getElementById('drawerOverlay');
 
-        function checkVersion() {
-            const savedVersion = localStorage.getItem('wt_app_version');
-            if (savedVersion !== APP_VERSION) {
-                updateModal.style.display = 'flex';
-                localStorage.setItem('wt_app_version', APP_VERSION);
-            }
-        }
-
-        function closeModal() { updateModal.style.display = 'none'; }
-
-        function toggleDrawer() {
-            const isOpen = historyDrawer.classList.contains('open');
-            if (isOpen) {
-                historyDrawer.classList.remove('open');
-                drawerOverlay.classList.remove('open');
-                setTimeout(() => drawerOverlay.style.display = 'none', 300);
-            } else {
-                drawerOverlay.style.display = 'block';
-                // Trigger reflow
-                void drawerOverlay.offsetWidth;
-                historyDrawer.classList.add('open');
-                drawerOverlay.classList.add('open');
-            }
+        function switchTab(tabName) {
+            // Remove active class from buttons and contents
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
         }
 
         function formatDuration(s) {
@@ -559,7 +475,7 @@
             } else {
                 const n = new Date(); startTimeInput.value = `${n.getHours().toString().padStart(2, '0')}:${n.getMinutes().toString().padStart(2, '0')}`;
             }
-            updateDisplays(); renderHistory(); checkVersion();
+            updateDisplays(); renderHistory(); 
         }
 
         loadState();
