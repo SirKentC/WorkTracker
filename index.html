@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WorkTracker</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --base-font: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -19,12 +20,7 @@
             --glass-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: var(--base-font);
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--base-font); }
 
         body {
             background: linear-gradient(-45deg, #0f172a, #1e1b4b, #020617, #172554);
@@ -38,112 +34,33 @@
             padding: 40px 20px;
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-        .app-wrapper {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            max-width: 550px; 
-            position: relative;
-        }
+        .app-wrapper { display: flex; justify-content: center; width: 100%; max-width: 550px; position: relative; }
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); padding: 35px; border-radius: 24px; box-shadow: var(--glass-shadow); width: 100%; }
 
-        .glass-panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            padding: 35px;
-            border-radius: 24px;
-            box-shadow: var(--glass-shadow);
-            width: 100%;
-        }
+        .branding-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; }
+        .app-logo { width: 50px; height: auto; margin-bottom: 10px; border-radius: 8px; display: none; }
+        h1 { font-size: 1.5rem; font-weight: 600; text-align: center; letter-spacing: 1px; color: var(--text-main); }
 
-        /* Branding */
-        .branding-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-        
-        .app-logo {
-            width: 50px;
-            height: auto;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            display: none;
-        }
-
-        h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            text-align: center;
-            letter-spacing: 1px;
-            color: var(--text-main);
-        }
-
-        /* Tab Navigation */
-        .tab-nav {
-            display: flex;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
-            padding: 5px;
-            margin-bottom: 30px;
-            border: 1px solid var(--glass-border);
-        }
-
-        .tab-btn {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            padding: 10px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .tab-btn.active {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-main);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-
-        /* Tab Content Area */
-        .tab-content {
-            display: none;
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-
+        .tab-nav { display: flex; background: rgba(0, 0, 0, 0.2); border-radius: 12px; padding: 5px; margin-bottom: 30px; border: 1px solid var(--glass-border); }
+        .tab-btn { flex: 1; background: transparent; border: none; color: var(--text-muted); padding: 10px; font-size: 0.85rem; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 1px; }
+        .tab-btn.active { background: rgba(255, 255, 255, 0.1); color: var(--text-main); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .tab-content { display: none; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         .tab-content.active { display: block; }
 
-        @keyframes popIn {
-            0% { opacity: 0; transform: scale(0.95); }
-            100% { opacity: 1; transform: scale(1); }
-        }
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
 
-        /* Setup Section */
         .setup-grid { display: flex; justify-content: center; gap: 30px; margin-bottom: 30px; padding-bottom: 25px; border-bottom: 1px solid var(--glass-border); }
         .setup-box { display: flex; flex-direction: column; gap: 5px; align-items: center; }
         .setup-box label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
         input[type="time"], input[type="number"].inline-input { background: transparent; color: var(--text-main); border: none; border-bottom: 1px solid rgba(255,255,255,0.2); padding: 5px 0; font-size: 1.2rem; font-weight: 500; outline: none; text-align: center; width: 120px; transition: border-color 0.3s; }
         input[type="time"]:focus, input[type="number"].inline-input:focus { border-bottom-color: var(--accent); }
 
-        /* Predictor Box */
         .predictor-box { text-align: center; margin-bottom: 35px; }
         .predictor-label { color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
         .sign-off-time { font-size: 4.5rem; font-weight: 700; color: var(--accent); text-shadow: 0 0 35px var(--accent-glow); letter-spacing: -2px; line-height: 1; }
 
-        /* Stats Grid */
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 35px; }
         .stat-card { background: rgba(255, 255, 255, 0.03); padding: 15px 5px; border-radius: 16px; text-align: center; border: 1px solid rgba(255,255,255,0.02); }
         .stat-title { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
@@ -151,21 +68,16 @@
         .text-break { color: var(--break-color); }
         .text-overtime { color: var(--overtime); }
 
-        /* Controls */
         .controls { display: flex; gap: 10px; margin-bottom: 15px; }
         .main-btn { border: none; padding: 16px; font-size: 0.9rem; font-weight: 600; border-radius: 12px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s ease; }
-        
         #actionBtn { flex: 2; background: linear-gradient(135deg, #0ea5e9, #3b82f6); color: #fff; box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25); }
         #actionBtn:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(59, 130, 246, 0.35); }
         #actionBtn.on-break { background: linear-gradient(135deg, #f87171, #ef4444); box-shadow: 0 8px 20px rgba(239, 68, 68, 0.25); }
-        
         #endWorkBtn { flex: 1.5; background: rgba(52, 211, 153, 0.15); border: 1px solid rgba(52, 211, 153, 0.3); color: var(--success); }
         #endWorkBtn:hover { background: rgba(52, 211, 153, 0.25); }
-
         #resetBtn { flex: 1; background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1); }
         #resetBtn:hover { background: rgba(255, 255, 255, 0.1); color: white; }
 
-        /* Manual Panel */
         .toggle-manual-btn { background: none; border: none; color: var(--text-muted); font-size: 0.8rem; width: 100%; text-align: center; padding: 10px; cursor: pointer; transition: color 0.2s; text-transform: uppercase; letter-spacing: 1px; }
         .toggle-manual-btn:hover { color: var(--text-main); }
         .manual-panel { background: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 16px; border: 1px solid var(--glass-border); display: none; flex-direction: column; gap: 15px; margin-top: 10px; }
@@ -178,7 +90,6 @@
         .btn-break { border: 1px solid var(--break-color); color: var(--break-color); }
         .btn-work { border: 1px solid var(--accent); color: var(--accent); }
 
-        /* History Content Area */
         #historyContainer { max-height: 500px; overflow-y: auto; padding-right: 5px; margin-bottom: 20px; }
         #historyContainer::-webkit-scrollbar { width: 5px; }
         #historyContainer::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
@@ -201,11 +112,12 @@
         .btn-delete-history { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; width: 100%; }
         .btn-delete-history:hover { background: rgba(239, 68, 68, 0.2); }
 
-        .data-mgmt { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; display: flex; justify-content: center; gap: 20px; }
+        .data-mgmt { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
         .btn-data { background: none; border: none; color: var(--text-muted); font-size: 0.75rem; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: color 0.2s; }
         .btn-data:hover { color: var(--text-main); }
+        .btn-pdf { color: var(--accent); font-weight: 600; }
+        .btn-pdf:hover { color: #fff; }
 
-        /* Custom Modal UI */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000; }
         .modal-box { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 30px; border-radius: 16px; width: 90%; max-width: 400px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); text-align: center; }
         .modal-title { font-size: 1.2rem; color: var(--text-main); margin-bottom: 10px; font-weight: 600; }
@@ -217,19 +129,29 @@
         .modal-btn-confirm { background: var(--accent); color: white; }
         .modal-btn-confirm:hover { background: #0284c7; }
 
-        /* Footer & Logo */
         .footer-credit { margin-top: 30px; font-size: 0.75rem; color: rgba(255, 255, 255, 0.3); text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .footer-credit span { color: var(--accent); font-weight: 600; }
         .footer-icon { width: 18px; height: 18px; border-radius: 4px; object-fit: contain; }
         
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+        /* Off-Screen Container for PDF Rendering */
+        #pdfRenderArea { position: absolute; left: -9999px; top: 0; width: 800px; background: white; color: black; padding: 40px; font-family: Arial, sans-serif; }
+        .pdf-header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 15px; }
+        .pdf-header h1 { color: #000; font-size: 24px; margin-bottom: 5px; }
+        .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px; }
+        .pdf-table th, .pdf-table td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+        .pdf-table th { background: #f4f4f4; font-weight: bold; }
+        .pdf-summary { text-align: right; font-size: 16px; font-weight: bold; margin-top: 20px; }
     </style>
 </head>
 <body>
 
+    <div id="pdfRenderArea"></div>
+
     <div class="modal-overlay" id="customModal">
         <div class="modal-box">
-            <div class="modal-title">SirKentC</div>
+            <div class="modal-title">▶ Trainer SirKentC says...</div>
             <div class="modal-message" id="customModalMessage"></div>
             <div class="modal-actions">
                 <button class="modal-btn modal-btn-cancel" id="customModalCancel" onclick="closeModal()">Cancel</button>
@@ -247,8 +169,8 @@
             </div>
 
             <div class="tab-nav">
-                <button class="tab-btn active" onclick="switchTab('tracker')">Tracker</button>
-                <button class="tab-btn" onclick="switchTab('history')">History</button>
+                <button class="tab-btn active" id="tabBtnTracker" onclick="switchTab('tracker')">Tracker</button>
+                <button class="tab-btn" id="tabBtnHistory" onclick="switchTab('history')">History</button>
             </div>
 
             <div id="trackerTab" class="tab-content active">
@@ -317,8 +239,9 @@
                 <div id="historyContainer"></div>
 
                 <div class="data-mgmt">
-                    <button class="btn-data" onclick="exportData()">Backup JSON</button>
-                    <button class="btn-data" onclick="document.getElementById('fileInput').click()">Restore JSON</button>
+                    <button class="btn-data btn-pdf" onclick="generatePDF()">↓ Export PDF</button>
+                    <button class="btn-data" onclick="exportData()">↓ JSON Backup</button>
+                    <button class="btn-data" onclick="document.getElementById('fileInput').click()">↑ JSON Restore</button>
                     <input type="file" id="fileInput" style="display:none" onchange="importData(event)" accept=".json">
                 </div>
             </div>
@@ -334,9 +257,8 @@
     <script>
         const BASE_GOAL = 8 * 3600;
         let accumulatedWork = 0, accumulatedBreak = 0, sessionStart = 0, currentState = 'idle', shiftHistory = [];
-        let activeInterval = null;
-        let liveClockInterval = null;
-        let userEditedTime = false;
+        let activeInterval = null, liveClockInterval = null;
+        let userEditedTime = false, shiftNotified = false;
         let confirmActionCallback = null;
 
         const startTimeInput = document.getElementById('startTime');
@@ -350,7 +272,58 @@
         const historyContainer = document.getElementById('historyContainer');
         const customModal = document.getElementById('customModal');
 
-        // Modal Logic
+        // Setup Global Hotkeys
+        document.addEventListener('keydown', (e) => {
+            // Ignore hotkeys if user is typing in an input or textarea
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+            if (e.code === 'Space') {
+                e.preventDefault(); // Prevent page scroll
+                toggleState();
+            }
+            if (e.code === 'Escape') {
+                if (customModal.style.display === 'flex') {
+                    closeModal();
+                } else if (document.getElementById('historyTab').classList.contains('active')) {
+                    switchTab('tracker');
+                }
+            }
+        });
+
+        // Audio & Notifications
+        function requestNotificationPermission() {
+            if ("Notification" in window && Notification.permission === "default") {
+                Notification.requestPermission();
+            }
+        }
+
+        function playBeep() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5 note
+                osc.frequency.exponentialRampToValueAtTime(1046.50, ctx.currentTime + 0.1); // Slide up to C6
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.5);
+            } catch (e) { console.log("Audio API not supported"); }
+        }
+
+        function checkShiftCompletion(workSec, targetSec) {
+            if (workSec >= targetSec && !shiftNotified && currentState === 'working') {
+                shiftNotified = true;
+                if ("Notification" in window && Notification.permission === "granted") {
+                    new Notification("Shift Complete", { body: "You have reached your target work hours for today!", icon: "logo.png" });
+                }
+                playBeep();
+            }
+        }
+
         function showCustomPopup(message, isConfirm, callback) {
             document.getElementById('customModalMessage').textContent = message;
             document.getElementById('customModalCancel').style.display = isConfirm ? 'inline-block' : 'none';
@@ -368,7 +341,6 @@
             closeModal();
         });
 
-        // Live Clock Logic
         function manageLiveClock() {
             if (currentState !== 'idle' || userEditedTime) {
                 if (liveClockInterval) clearInterval(liveClockInterval);
@@ -388,11 +360,10 @@
             }
         }
 
-        // Tab System
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            document.getElementById(tabName === 'tracker' ? 'tabBtnTracker' : 'tabBtnHistory').classList.add('active');
             document.getElementById(tabName + 'Tab').classList.add('active');
         }
 
@@ -401,6 +372,11 @@
             const m = Math.floor((s % 3600) / 60).toString().padStart(2, '0');
             const sec = (s % 60).toString().padStart(2, '0');
             return `${h}:${m}:${sec}`;
+        }
+
+        function durationToHours(durationStr) {
+            const parts = durationStr.split(':').map(Number);
+            return parts[0] + (parts[1] / 60) + (parts[2] / 3600);
         }
 
         function getCurrentTotals() {
@@ -433,6 +409,8 @@
             overtimeDisplay.textContent = formatDuration(ot);
             breakTimeDisplay.textContent = formatDuration(b);
 
+            checkShiftCompletion(w, totalGoalSec);
+
             if (w >= totalGoalSec && currentState === 'working') {
                 signOffLabel.textContent = "Shift Status";
                 signOffDisplay.textContent = "UNPLANNED OT";
@@ -455,6 +433,7 @@
         }
 
         function toggleState() {
+            requestNotificationPermission();
             const now = Date.now();
             if (currentState === 'idle') {
                 const [h, m] = startTimeInput.value.split(':').map(Number);
@@ -502,12 +481,10 @@
             const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
             
             const shift = {
-                id: timestampId,
-                date: dateStr,
+                id: timestampId, date: dateStr,
                 work: formatDuration(accumulatedWork > BASE_GOAL ? BASE_GOAL : accumulatedWork),
                 ot: formatDuration(accumulatedWork > BASE_GOAL ? accumulatedWork - BASE_GOAL : 0),
-                break: formatDuration(accumulatedBreak), 
-                notes: ""
+                break: formatDuration(accumulatedBreak), notes: ""
             };
             
             shiftHistory.unshift(shift);
@@ -522,11 +499,10 @@
         function wipeTimerToIdle() {
             clearInterval(activeInterval);
             accumulatedWork = 0; accumulatedBreak = 0; sessionStart = 0; currentState = 'idle';
+            shiftNotified = false;
             actionBtn.textContent = "Start Work"; actionBtn.classList.remove('on-break');
-            
             userEditedTime = false; 
             manageLiveClock(); 
-            
             plannedOtInput.value = "0"; 
             saveState(); updateDisplays(); renderHistory();
         }
@@ -548,8 +524,7 @@
 
             const groupedShifts = {};
             shiftHistory.forEach(s => {
-                const dateObj = new Date(s.id);
-                const monthYear = dateObj.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                const monthYear = new Date(s.id).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
                 if (!groupedShifts[monthYear]) groupedShifts[monthYear] = [];
                 groupedShifts[monthYear].push(s);
             });
@@ -583,6 +558,86 @@
             }
         }
 
+        function generatePDF() {
+            if (shiftHistory.length === 0) {
+                showCustomPopup("No history to export.", false, null);
+                return;
+            }
+
+            const renderArea = document.getElementById('pdfRenderArea');
+            let htmlContent = `
+                <div class="pdf-header">
+                    <h1>SirKentC Studio</h1>
+                    <p>Official Timesheet Report</p>
+                    <p>Generated: ${new Date().toLocaleDateString('en-US')}</p>
+                </div>
+            `;
+
+            const groupedShifts = {};
+            shiftHistory.forEach(s => {
+                const monthYear = new Date(s.id).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                if (!groupedShifts[monthYear]) groupedShifts[monthYear] = [];
+                groupedShifts[monthYear].push(s);
+            });
+
+            for (const [month, shifts] of Object.entries(groupedShifts)) {
+                htmlContent += `<h2>${month}</h2>`;
+                htmlContent += `
+                    <table class="pdf-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Work Hours</th>
+                                <th>Overtime</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                let monthTotalWork = 0;
+                let monthTotalOT = 0;
+
+                shifts.forEach(s => {
+                    monthTotalWork += durationToHours(s.work);
+                    monthTotalOT += durationToHours(s.ot);
+                    htmlContent += `
+                        <tr>
+                            <td>${s.date}</td>
+                            <td>${s.work}</td>
+                            <td>${s.ot}</td>
+                            <td>${s.notes || '-'}</td>
+                        </tr>
+                    `;
+                });
+
+                htmlContent += `
+                        </tbody>
+                    </table>
+                    <div class="pdf-summary">
+                        Total Standard Work: ${monthTotalWork.toFixed(2)} Hrs<br>
+                        Total Overtime: ${monthTotalOT.toFixed(2)} Hrs
+                    </div>
+                    <br><br>
+                `;
+            }
+
+            renderArea.innerHTML = htmlContent;
+
+            // Generate PDF using html2pdf
+            const opt = {
+                margin:       0.5,
+                filename:     `Timesheet_SirKentC_${new Date().toISOString().slice(0,10)}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(renderArea).save().then(() => {
+                renderArea.innerHTML = ''; // Clean up after generation
+            });
+        }
+
         function exportData() {
             const blob = new Blob([localStorage.getItem('workTrackerData')], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
@@ -600,7 +655,7 @@
             localStorage.setItem('workTrackerData', JSON.stringify({ 
                 accumulatedWork, accumulatedBreak, sessionStart, currentState, 
                 clockInTime: startTimeInput.value, plannedOt: plannedOtInput.value, 
-                history: shiftHistory, userEditedTime 
+                history: shiftHistory, userEditedTime, shiftNotified
             })); 
         }
 
@@ -611,6 +666,7 @@
                 sessionStart = d.sessionStart || 0; currentState = d.currentState || 'idle';
                 plannedOtInput.value = d.plannedOt || 0; shiftHistory = d.history || [];
                 userEditedTime = d.userEditedTime || false;
+                shiftNotified = d.shiftNotified || false;
                 
                 if (d.clockInTime) startTimeInput.value = d.clockInTime;
 
@@ -620,7 +676,6 @@
                     activeInterval = setInterval(updateDisplays, 1000);
                 }
             } 
-            
             manageLiveClock();
             updateDisplays(); 
             renderHistory(); 
