@@ -8,6 +8,7 @@
     <style>
         :root {
             --base-font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --bg-grad: linear-gradient(-45deg, #0f172a, #1e1b4b, #020617, #172554);
             --text-main: #ffffff;
             --text-muted: #94a3b8;
             --accent: #38bdf8;
@@ -18,54 +19,90 @@
             --glass-bg: rgba(15, 23, 42, 0.7);
             --glass-border: rgba(255, 255, 255, 0.05);
             --glass-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            --input-bg: rgba(255,255,255,0.03);
+            --history-bg: rgba(0, 0, 0, 0.2);
+            --history-body-bg: rgba(0,0,0,0.15);
+        }
+
+        body.theme-dark {
+            --bg-grad: #09090b;
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --glass-bg: #18181b;
+            --glass-border: #27272a;
+            --input-bg: #27272a;
+            --history-bg: #18181b;
+            --history-body-bg: #27272a;
+            --glass-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
+        }
+
+        body.theme-light {
+            --bg-grad: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent: #0284c7;
+            --overtime: #9333ea;
+            --break-color: #e11d48;
+            --glass-bg: #ffffff;
+            --glass-border: #e2e8f0;
+            --input-bg: #f1f5f9;
+            --history-bg: #ffffff;
+            --history-body-bg: #f8fafc;
+            --glass-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--base-font); }
 
         body {
-            background: linear-gradient(-45deg, #0f172a, #1e1b4b, #020617, #172554);
+            background: var(--bg-grad);
             background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
             color: var(--text-main);
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
             padding: 40px 20px;
+            transition: background 0.3s ease, color 0.3s ease;
         }
+
+        body.theme-default { animation: gradientBG 15s ease infinite; }
+        body.theme-dark, body.theme-light { background-size: auto; animation: none; }
 
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
         .app-wrapper { display: flex; justify-content: center; width: 100%; max-width: 550px; position: relative; z-index: 10; }
-        .glass-panel { position: relative; background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); padding: 35px; border-radius: 24px; box-shadow: var(--glass-shadow); width: 100%; }
-
-        .btn-help { position: absolute; top: 25px; right: 25px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-muted); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 0.9rem; transition: all 0.2s; }
-        .btn-help:hover { background: rgba(255,255,255,0.1); color: var(--text-main); }
+        .glass-panel { position: relative; background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); padding: 35px; border-radius: 24px; box-shadow: var(--glass-shadow); width: 100%; transition: background 0.3s ease, border-color 0.3s ease; }
 
         .branding-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; }
         .app-logo { width: 50px; height: auto; margin-bottom: 10px; border-radius: 8px; display: none; }
         h1 { font-size: 1.5rem; font-weight: 600; text-align: center; letter-spacing: 1px; color: var(--text-main); }
 
-        .tab-nav { display: flex; background: rgba(0, 0, 0, 0.2); border-radius: 12px; padding: 5px; margin-bottom: 30px; border: 1px solid var(--glass-border); }
+        .tab-nav { display: flex; background: var(--history-bg); border-radius: 12px; padding: 5px; margin-bottom: 30px; border: 1px solid var(--glass-border); }
         .tab-btn { flex: 1; background: transparent; border: none; color: var(--text-muted); padding: 10px; font-size: 0.85rem; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 1px; }
-        .tab-btn.active { background: rgba(255, 255, 255, 0.1); color: var(--text-main); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .tab-btn.active { background: var(--input-bg); color: var(--text-main); box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 1px solid var(--glass-border); }
+        
         .tab-content { display: none; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         .tab-content.active { display: block; }
 
         @keyframes popIn { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
 
+        /* General Inputs */
+        input, select { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--glass-border); padding: 10px; border-radius: 8px; outline: none; transition: border-color 0.2s; font-family: var(--base-font); }
+        input:focus, select:focus { border-color: var(--accent); }
+        
         .setup-grid { display: flex; justify-content: center; gap: 30px; margin-bottom: 30px; padding-bottom: 25px; border-bottom: 1px solid var(--glass-border); }
         .setup-box { display: flex; flex-direction: column; gap: 5px; align-items: center; }
         .setup-box label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
-        input[type="time"], input[type="number"].inline-input { background: transparent; color: var(--text-main); border: none; border-bottom: 1px solid rgba(255,255,255,0.2); padding: 5px 0; font-size: 1.2rem; font-weight: 500; outline: none; text-align: center; width: 120px; transition: border-color 0.3s; }
+        input[type="time"], input[type="number"].inline-input { background: transparent; border: none; border-bottom: 1px solid var(--glass-border); border-radius: 0; padding: 5px 0; font-size: 1.2rem; font-weight: 500; text-align: center; width: 120px; }
         input[type="time"]:focus, input[type="number"].inline-input:focus { border-bottom-color: var(--accent); }
 
         .predictor-box { text-align: center; margin-bottom: 35px; }
         .predictor-label { color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
         .sign-off-time { font-size: 4.5rem; font-weight: 700; color: var(--accent); text-shadow: 0 0 35px var(--accent-glow); letter-spacing: -2px; line-height: 1; }
+        body.theme-light .sign-off-time { text-shadow: none; }
 
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 35px; }
-        .stat-card { background: rgba(255, 255, 255, 0.03); padding: 15px 5px; border-radius: 16px; text-align: center; border: 1px solid rgba(255,255,255,0.02); }
+        .stat-card { background: var(--input-bg); padding: 15px 5px; border-radius: 16px; text-align: center; border: 1px solid var(--glass-border); }
         .stat-title { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
         .stat-value { font-size: 1.2rem; font-weight: 600; font-variant-numeric: tabular-nums; }
         .text-break { color: var(--break-color); }
@@ -78,77 +115,94 @@
         #actionBtn:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(59, 130, 246, 0.35); }
         #actionBtn.on-break { background: linear-gradient(135deg, #f87171, #ef4444); box-shadow: 0 8px 20px rgba(239, 68, 68, 0.25); }
         
-        #endWorkBtn { flex: 1; padding: 14px; font-size: 0.85rem; border-radius: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease; background: rgba(52, 211, 153, 0.15); border: 1px solid rgba(52, 211, 153, 0.3); color: var(--success); }
-        #endWorkBtn:hover { background: rgba(52, 211, 153, 0.25); }
+        #endWorkBtn { flex: 1; padding: 14px; font-size: 0.85rem; border-radius: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease; background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.3); color: var(--success); }
+        #endWorkBtn:hover { background: rgba(52, 211, 153, 0.2); }
         
-        #resetBtn { flex: 1; padding: 14px; font-size: 0.85rem; border-radius: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease; background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1); }
-        #resetBtn:hover { background: rgba(255, 255, 255, 0.1); color: white; }
+        #resetBtn { flex: 1; padding: 14px; font-size: 0.85rem; border-radius: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease; background: var(--input-bg); color: var(--text-muted); border: 1px solid var(--glass-border); }
+        #resetBtn:hover { border-color: var(--text-muted); color: var(--text-main); }
 
         .toggle-manual-btn { background: none; border: none; color: var(--text-muted); font-size: 0.8rem; width: 100%; text-align: center; padding: 10px; cursor: pointer; transition: color 0.2s; text-transform: uppercase; letter-spacing: 1px; }
         .toggle-manual-btn:hover { color: var(--text-main); }
-        .manual-panel { background: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 16px; border: 1px solid var(--glass-border); display: none; flex-direction: column; gap: 15px; margin-top: 10px; }
+        .manual-panel { background: var(--history-bg); padding: 20px; border-radius: 16px; border: 1px solid var(--glass-border); display: none; flex-direction: column; gap: 15px; margin-top: 10px; }
         .manual-panel.open { display: flex; }
         .manual-row { display: flex; gap: 10px; align-items: center; }
         .manual-label { font-size: 0.8rem; color: var(--text-muted); width: 120px; }
         .time-input-group { display: flex; gap: 8px; flex-grow: 1; }
-        .manual-row input { width: 100%; background: rgba(255,255,255,0.03); color: var(--text-main); border: 1px solid rgba(255,255,255,0.1); padding: 8px; border-radius: 8px; outline: none; text-align: center; }
+        .manual-row input { width: 100%; text-align: center; }
         .manual-row button { padding: 8px 12px; font-size: 0.8rem; font-weight: 600; background-color: transparent; border-radius: 8px; cursor: pointer; }
         .btn-break { border: 1px solid var(--break-color); color: var(--break-color); }
         .btn-work { border: 1px solid var(--accent); color: var(--accent); }
 
-        #historyContainer { max-height: 500px; overflow-y: auto; padding-right: 5px; margin-bottom: 20px; }
+        /* History Tab */
+        #historyContainer { max-height: 450px; overflow-y: auto; padding-right: 5px; margin-bottom: 20px; }
         #historyContainer::-webkit-scrollbar { width: 5px; }
-        #historyContainer::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+        #historyContainer::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
         
-        .history-month-header { font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin: 20px 0 10px 0; padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .history-month-header { font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin: 20px 0 10px 0; padding-bottom: 5px; border-bottom: 1px solid var(--glass-border); }
         .history-month-header:first-child { margin-top: 0; }
 
-        .history-item { background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+        .history-item { background: var(--history-bg); border: 1px solid var(--glass-border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
         .history-header { padding: 12px 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s;}
-        .history-header:hover { background: rgba(255,255,255,0.05); }
+        .history-header:hover { background: var(--input-bg); }
         .history-date { font-weight: 500; font-size: 0.9rem; }
-        .history-body { padding: 15px; border-top: 1px solid rgba(255,255,255,0.02); display: none; background: rgba(0,0,0,0.15); }
+        .history-body { padding: 15px; border-top: 1px solid var(--glass-border); display: none; background: var(--history-body-bg); }
         .history-item.active .history-body { display: block; }
         .history-stats { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; font-size: 0.75rem; }
-        .history-badge { background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px; }
+        .history-badge { background: var(--glass-border); padding: 4px 8px; border-radius: 6px; }
         
-        .history-notes { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); color: var(--text-main); padding: 10px; border-radius: 8px; min-height: 60px; font-size: 0.85rem; outline: none; transition: border-color 0.2s; margin-bottom: 10px;}
+        .history-notes { width: 100%; background: var(--input-bg); border: 1px solid var(--glass-border); color: var(--text-main); padding: 10px; border-radius: 8px; min-height: 60px; font-size: 0.85rem; outline: none; transition: border-color 0.2s; margin-bottom: 10px;}
         .history-notes:focus { border-color: var(--accent); }
 
-        .btn-delete-history { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; width: 100%; }
-        .btn-delete-history:hover { background: rgba(239, 68, 68, 0.2); }
+        .btn-delete-history { background: rgba(225, 29, 72, 0.1); color: var(--break-color); border: 1px solid rgba(225, 29, 72, 0.3); padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; width: 100%; }
+        .btn-delete-history:hover { background: rgba(225, 29, 72, 0.2); }
+        
+        .btn-pdf-large { width: 100%; padding: 15px; border-radius: 12px; background: transparent; border: 1px solid var(--accent); color: var(--accent); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s; }
+        .btn-pdf-large:hover { background: var(--accent); color: #fff; }
 
-        .data-mgmt { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
-        .btn-data { background: none; border: none; color: var(--text-muted); font-size: 0.75rem; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: color 0.2s; }
-        .btn-data:hover { color: var(--text-main); }
-        .btn-pdf { color: var(--accent); font-weight: 600; }
-        .btn-pdf:hover { color: #fff; }
+        /* Settings Tab */
+        .settings-section { margin-bottom: 30px; }
+        .settings-section h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px; margin-bottom: 15px; }
+        
+        .setting-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .setting-row label { font-size: 0.9rem; font-weight: 500; }
+        .setting-row input[type="number"] { width: 80px; text-align: center; }
+        .setting-row select { width: 150px; }
+        
+        .pro-row { background: var(--history-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--glass-border); flex-wrap: wrap; gap: 10px; }
+        .pro-badge { background: linear-gradient(135deg, #f59e0b, #f97316); color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px; font-weight: bold; letter-spacing: 1px; }
+        .pro-input { flex: 1; min-width: 150px; opacity: 0.5; cursor: not-allowed; }
+        .pro-btn { background: var(--input-bg); color: var(--accent); border: 1px solid var(--accent); padding: 8px 15px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; text-decoration: none; text-align: center; transition: all 0.2s; }
+        .pro-btn:hover { background: var(--accent); color: white; }
 
+        .btn-setting { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; background: var(--input-bg); border: 1px solid var(--glass-border); color: var(--text-main); font-size: 0.9rem; cursor: pointer; transition: all 0.2s; text-align: left; display: flex; align-items: center; gap: 10px; }
+        .btn-setting:hover { border-color: var(--text-muted); }
+        .btn-danger { color: var(--break-color); border-color: rgba(225, 29, 72, 0.3); background: rgba(225, 29, 72, 0.05); }
+        .btn-danger:hover { background: rgba(225, 29, 72, 0.15); border-color: var(--break-color); }
+
+        /* Modals */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000; }
         .modal-box { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 30px; border-radius: 16px; width: 90%; max-width: 400px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); text-align: center; }
+        .modal-input-large { width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main); text-align: center; font-size: 1rem; outline: none; }
+        .modal-input-large:focus { border-color: var(--accent); }
         
-        .modal-input { width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: var(--text-main); font-family: var(--base-font); outline: none; transition: border-color 0.2s; text-align: center; font-size: 1rem; }
-        .modal-input:focus { border-color: var(--accent); background: rgba(0,0,0,0.4); }
-
-        .modal-box.help-box { max-width: 550px; text-align: left; max-height: 85vh; overflow-y: auto; }
+        .help-box { max-width: 550px; text-align: left; max-height: 85vh; overflow-y: auto; }
         .help-box::-webkit-scrollbar { width: 6px; }
-        .help-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
-        .help-box h2 { color: var(--text-main); font-size: 1.3rem; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        .help-box::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+        .help-box h2 { color: var(--text-main); font-size: 1.3rem; margin-bottom: 20px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; }
         .help-box h3 { color: var(--accent); font-size: 1rem; margin-top: 25px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;}
-        .help-box p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px; line-height: 1.6; }
-        .help-box ul { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; padding-left: 20px; line-height: 1.6; }
+        .help-box p, .help-box ul { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px; line-height: 1.6; }
+        .help-box ul { padding-left: 20px; }
         .help-box li { margin-bottom: 8px; }
-        
-        kbd { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-bottom: 2px solid rgba(255,255,255,0.3); border-radius: 4px; padding: 2px 6px; font-family: monospace; color: var(--accent); font-size: 0.8rem; }
+        kbd { background: var(--input-bg); border: 1px solid var(--glass-border); border-bottom: 2px solid var(--glass-border); border-radius: 4px; padding: 2px 6px; font-family: monospace; color: var(--accent); font-size: 0.8rem; }
 
         .modal-title { font-size: 1.2rem; color: var(--text-main); margin-bottom: 10px; font-weight: 600; }
         .modal-message { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; line-height: 1.5; }
         .modal-actions { display: flex; gap: 15px; justify-content: center; margin-top: 10px;}
-        .help-box .modal-actions { justify-content: flex-end; position: sticky; bottom: 0; background: var(--glass-bg); padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .help-box .modal-actions { justify-content: flex-end; position: sticky; bottom: 0; background: var(--glass-bg); padding-top: 15px; border-top: 1px solid var(--glass-border); }
         
         .modal-btn { padding: 10px 20px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 0.9rem; }
-        .modal-btn-cancel { background: rgba(255,255,255,0.1); color: var(--text-main); }
-        .modal-btn-cancel:hover { background: rgba(255,255,255,0.2); }
+        .modal-btn-cancel { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--glass-border); }
+        .modal-btn-cancel:hover { border-color: var(--text-muted); }
         .modal-btn-confirm { background: var(--accent); color: white; }
         .modal-btn-confirm:hover { background: #0284c7; }
 
@@ -159,7 +213,23 @@
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     </style>
 </head>
-<body>
+<body class="theme-default">
+
+    <div class="modal-overlay" id="updateModal">
+        <div class="modal-box">
+            <div class="modal-title">WorkTracker v2.0</div>
+            <div style="color: var(--accent); font-size: 0.85rem; margin-bottom: 20px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Patch Notes</div>
+            <ul style="text-align: left; color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 25px; padding-left: 20px;">
+                <li><strong>Settings Architecture:</strong> A dedicated control panel for your app preferences.</li>
+                <li><strong>Custom Shift Lengths:</strong> Set your base working hours independently of the 8-hour default.</li>
+                <li><strong>Theme Engine:</strong> Swap between Default Gradient, OLED Dark, and Clean Light modes.</li>
+                <li><strong>Data Safety:</strong> Relocated backups and history wipes to prevent accidental clicks.</li>
+            </ul>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-confirm" onclick="closeUpdateModal()">Awesome</button>
+            </div>
+        </div>
+    </div>
 
     <div class="modal-overlay" id="helpModal">
         <div class="modal-box help-box">
@@ -168,32 +238,29 @@
             
             <h3>1. The Core Loop</h3>
             <ul>
-                <li><strong>Auto-Clock:</strong> While idle, the <strong>Clock-In Time</strong> perfectly syncs to your system clock. The moment you press Start, that time is locked in for the day.</li>
-                <li><strong>Overtime Target:</strong> WorkTracker assumes a standard 8-hour shift. If you enter hours into the <strong>Planned OT</strong> box, it will dynamically calculate and push back your "Projected End of Shift" time.</li>
-                <li><strong>Shift Completion:</strong> When your Active Work hits your target hours, the app will trigger a system notification and an audio chime. The projected end time will turn purple and alert you that you are working Unplanned OT.</li>
+                <li><strong>Auto-Clock:</strong> While idle, the <strong>Clock-In Time</strong> syncs to your system clock. The moment you press Start, that time is locked in for the day.</li>
+                <li><strong>Shift Targets:</strong> Go to the Settings tab to adjust your <strong>Base Shift Length</strong>. Add hours into the <strong>Planned OT</strong> box to push back your projected end time dynamically.</li>
+                <li><strong>Shift Completion:</strong> When your Active Work hits your target hours, the app will trigger a system notification and an audio chime.</li>
             </ul>
 
             <h3>2. Action Buttons</h3>
             <ul>
-                <li><strong>Start Work / Take Break:</strong> This is your primary toggle. It controls the main timer and logs your time into either the Active Work or Break Time categories.</li>
-                <li><strong>End Work:</strong> Finalizes your current session, stops the timers, and permanently saves the data (Work, Break, and OT) to your Shift History ledger.</li>
-                <li><strong>Reset:</strong> A destructive action. It completely wipes the current timer back to zero <em>without</em> saving anything to your history.</li>
+                <li><strong>Start Work / Take Break:</strong> Your primary toggle. It controls the main timer.</li>
+                <li><strong>End Work:</strong> Finalizes your session and permanently saves the data to your History ledger.</li>
+                <li><strong>Reset:</strong> A destructive action. Wipes the current timer back to zero <em>without</em> saving.</li>
             </ul>
 
-            <h3>3. Manual Adjustments</h3>
-            <p>If you forget to pause the timer when stepping away, or if you do offline work that wasn't tracked, click <strong>Adjust Time Manually</strong> at the bottom of the tracker. Entering time into the "Missed Break" box will subtract that time from your Active Work and add it to Break Time to balance the ledger.</p>
-
-            <h3>4. History & Exports</h3>
+            <h3>3. History & Exports</h3>
             <ul>
-                <li><strong>The Ledger:</strong> The History tab safely stores your shifts, grouped automatically by month and year. Click on any shift to open it, view exact metrics, or type specific notes about what was accomplished that day.</li>
-                <li><strong>PDF Export:</strong> Generates a stylized, printable invoice document of your entire history, automatically calculating your total hours and overtime for each month.</li>
-                <li><strong>JSON Backup/Restore:</strong> Because this app is 100% private, your data lives strictly in your browser. Use these buttons to download a raw database file of your history so you can transfer it to a new computer or clear your browser cache safely.</li>
+                <li><strong>The Ledger:</strong> Click on any shift in the History tab to open it, view exact metrics, or type specific notes.</li>
+                <li><strong>PDF Export:</strong> Generates a stylized invoice document of your entire history with calculated monthly totals.</li>
+                <li><strong>JSON Backup/Restore (in Settings):</strong> Download a raw database file of your history to transfer computers or safely clear your cache.</li>
             </ul>
 
-            <h3>5. Global Hotkeys</h3>
+            <h3>4. Global Hotkeys</h3>
             <ul>
-                <li><kbd>Spacebar</kbd> Rapidly toggle between Start Work, Take Break, and Resume Work.</li>
-                <li><kbd>Esc</kbd> Close popups, close this help manual, or instantly return to the Tracker tab from the History tab.</li>
+                <li><kbd>Spacebar</kbd> Toggle between Start Work, Take Break, and Resume Work.</li>
+                <li><kbd>Esc</kbd> Close popups or return to the Tracker tab.</li>
             </ul>
 
             <div class="modal-actions">
@@ -206,7 +273,7 @@
         <div class="modal-box">
             <div class="modal-title" id="customModalTitle">SirKentC</div>
             <div class="modal-message" id="customModalMessage"></div>
-            <input type="text" id="customModalInput" class="modal-input" style="display:none;" />
+            <input type="text" id="customModalInput" class="modal-input-large" style="display:none;" />
             <div class="modal-actions">
                 <button class="modal-btn modal-btn-cancel" id="customModalCancel" onclick="closeModal()">Cancel</button>
                 <button class="modal-btn modal-btn-confirm" id="customModalConfirm">OK</button>
@@ -217,8 +284,6 @@
     <div class="app-wrapper">
         <div class="glass-panel">
             
-            <button class="btn-help" onclick="showHelp()" title="Documentation">?</button>
-
             <div class="branding-header">
                 <img src="logo.png" alt="Logo" class="app-logo" onload="this.style.display='block'" onerror="this.style.display='none'">
                 <h1>WorkTracker</h1>
@@ -227,6 +292,7 @@
             <div class="tab-nav">
                 <button class="tab-btn active" id="tabBtnTracker" onclick="switchTab('tracker')">Tracker</button>
                 <button class="tab-btn" id="tabBtnHistory" onclick="switchTab('history')">History</button>
+                <button class="tab-btn" id="tabBtnSettings" onclick="switchTab('settings')">Settings</button>
             </div>
 
             <div id="trackerTab" class="tab-content active">
@@ -294,14 +360,52 @@
             </div>
 
             <div id="historyTab" class="tab-content">
+                <button class="btn-pdf-large" onclick="triggerPDFExport()">📄 Generate PDF Report</button>
+                <div style="margin-bottom: 20px;"></div>
                 <div id="historyContainer"></div>
+            </div>
 
-                <div class="data-mgmt">
-                    <button class="btn-data btn-pdf" onclick="triggerPDFExport()">↓ Export PDF</button>
-                    <button class="btn-data" onclick="exportData()">↓ JSON Backup</button>
-                    <button class="btn-data" onclick="document.getElementById('fileInput').click()">↑ JSON Restore</button>
-                    <input type="file" id="fileInput" style="display:none" onchange="importData(event)" accept=".json">
+            <div id="settingsTab" class="tab-content">
+                
+                <div class="settings-section">
+                    <h3>Preferences</h3>
+                    <div class="setting-row">
+                        <label>Base Shift Length (Hrs)</label>
+                        <input type="number" id="baseShiftInput" value="8" min="1" max="24" step="0.5" onchange="saveSettings()">
+                    </div>
+                    <div class="setting-row">
+                        <label>App Theme</label>
+                        <select id="themeSelect" onchange="saveSettings()">
+                            <option value="theme-default">Default Gradient</option>
+                            <option value="theme-dark">Solid Dark</option>
+                            <option value="theme-light">Clean Light</option>
+                        </select>
+                    </div>
                 </div>
+
+                <div class="settings-section">
+                    <h3>Pro Features</h3>
+                    <div class="setting-row pro-row">
+                        <label style="width: 100%;">Custom PDF Branding <span class="pro-badge">PRO</span></label>
+                        <input type="text" value="SirKentC" disabled class="pro-input">
+                        <button class="pro-btn" onclick="showCustomPopup('SirKentC says...', 'To unlock custom branding, purchase WorkTracker Pro. (Link goes here!)', false, null)">Unlock Pro</button>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>Data Management</h3>
+                    <button class="btn-setting" onclick="exportData()">↓ Backup JSON History</button>
+                    <button class="btn-setting" onclick="document.getElementById('fileInput').click()">↑ Restore JSON History</button>
+                    <input type="file" id="fileInput" style="display:none" onchange="importData(event)" accept=".json">
+                    <button class="btn-setting btn-danger" onclick="triggerNuclearReset()">⚠ Wipe All Data</button>
+                </div>
+
+                <div class="settings-section">
+                    <h3>About</h3>
+                    <button class="btn-setting" onclick="showHelp()">📖 View Documentation</button>
+                    <button class="btn-setting" onclick="window.open('https://github.com/sirkentc', '_blank')">💻 GitHub Profile</button>
+                </div>
+
             </div>
 
         </div>
@@ -313,7 +417,8 @@
     </div>
 
     <script>
-        const BASE_GOAL = 8 * 3600;
+        const APP_VERSION = "2.0";
+        let baseShiftSec = 8 * 3600;
         let accumulatedWork = 0, accumulatedBreak = 0, sessionStart = 0, currentState = 'idle', shiftHistory = [];
         let activeInterval = null, liveClockInterval = null;
         let userEditedTime = false, shiftNotified = false;
@@ -330,6 +435,16 @@
         const historyContainer = document.getElementById('historyContainer');
         const customModal = document.getElementById('customModal');
         const helpModal = document.getElementById('helpModal');
+        const updateModal = document.getElementById('updateModal');
+
+        function checkVersion() {
+            const savedVersion = localStorage.getItem('wt_app_version');
+            if (savedVersion !== APP_VERSION) {
+                updateModal.style.display = 'flex';
+                localStorage.setItem('wt_app_version', APP_VERSION);
+            }
+        }
+        function closeUpdateModal() { updateModal.style.display = 'none'; }
 
         function showHelp() { helpModal.style.display = 'flex'; }
         function closeHelp() { 
@@ -344,21 +459,17 @@
             if (e.code === 'Enter' && customModal.style.display === 'flex') {
                 document.getElementById('customModalConfirm').click();
             }
-
             if (e.code === 'Space' && e.target.id !== 'customModalInput') {
                 e.preventDefault(); 
-                if (helpModal.style.display !== 'flex' && customModal.style.display !== 'flex') {
-                    toggleState();
+                if (helpModal.style.display !== 'flex' && customModal.style.display !== 'flex' && updateModal.style.display !== 'flex') {
+                    if(document.getElementById('trackerTab').classList.contains('active')) toggleState();
                 }
             }
             if (e.code === 'Escape') {
-                if (helpModal.style.display === 'flex') {
-                    closeHelp();
-                } else if (customModal.style.display === 'flex') {
-                    closeModal();
-                } else if (document.getElementById('historyTab').classList.contains('active')) {
-                    switchTab('tracker');
-                }
+                if (helpModal.style.display === 'flex') closeHelp();
+                else if (updateModal.style.display === 'flex') closeUpdateModal();
+                else if (customModal.style.display === 'flex') closeModal();
+                else switchTab('tracker');
             }
         });
 
@@ -421,7 +532,6 @@
         document.getElementById('customModalConfirm').addEventListener('click', () => {
             const inputEl = document.getElementById('customModalInput');
             const inputValue = inputEl.style.display === 'block' ? inputEl.value : null;
-
             if (confirmActionCallback) confirmActionCallback(inputValue);
             closeModal();
         });
@@ -448,7 +558,12 @@
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            document.getElementById(tabName === 'tracker' ? 'tabBtnTracker' : 'tabBtnHistory').classList.add('active');
+            
+            let btnId = 'tabBtnTracker';
+            if(tabName === 'history') btnId = 'tabBtnHistory';
+            if(tabName === 'settings') btnId = 'tabBtnSettings';
+
+            document.getElementById(btnId).classList.add('active');
             document.getElementById(tabName + 'Tab').classList.add('active');
         }
 
@@ -485,10 +600,10 @@
 
             const { w, b } = getCurrentTotals();
             const plannedOtSec = (parseFloat(plannedOtInput.value) || 0) * 3600;
-            const totalGoalSec = BASE_GOAL + plannedOtSec;
+            const totalGoalSec = baseShiftSec + plannedOtSec;
 
-            let std = w > BASE_GOAL ? BASE_GOAL : w;
-            let ot = w > BASE_GOAL ? w - BASE_GOAL : 0;
+            let std = w > baseShiftSec ? baseShiftSec : w;
+            let ot = w > baseShiftSec ? w - baseShiftSec : 0;
 
             workTimeDisplay.textContent = formatDuration(std);
             overtimeDisplay.textContent = formatDuration(ot);
@@ -509,12 +624,22 @@
 
         function calculateSignOff(breakSec, otHr) {
             if (!startTimeInput.value) return "--:--";
+            const baseShiftHrs = parseFloat(document.getElementById('baseShiftInput').value) || 8;
             const [h, m] = startTimeInput.value.split(':').map(Number);
-            const totalMins = (8 + otHr) * 60 + Math.floor(breakSec / 60);
-            let finalH = h + Math.floor(totalMins / 60), finalM = m + (totalMins % 60);
+            
+            // Calculate total minutes to add
+            const totalMins = (baseShiftHrs + otHr) * 60 + Math.floor(breakSec / 60);
+            
+            let finalH = h + Math.floor(totalMins / 60);
+            let finalM = m + (totalMins % 60);
+            
             if (finalM >= 60) { finalH++; finalM -= 60; }
-            const ampm = finalH >= 12 && finalH < 24 ? 'PM' : 'AM';
-            return `${finalH % 12 || 12}:${finalM.toString().padStart(2, '0')} ${ampm}`;
+            
+            const ampm = (finalH % 24) >= 12 ? 'PM' : 'AM';
+            let displayH = finalH % 12;
+            if (displayH === 0) displayH = 12;
+            
+            return `${displayH}:${finalM.toString().padStart(2, '0')} ${ampm}`;
         }
 
         function toggleState() {
@@ -567,8 +692,8 @@
             
             const shift = {
                 id: timestampId, date: dateStr,
-                work: formatDuration(accumulatedWork > BASE_GOAL ? BASE_GOAL : accumulatedWork),
-                ot: formatDuration(accumulatedWork > BASE_GOAL ? accumulatedWork - BASE_GOAL : 0),
+                work: formatDuration(accumulatedWork > baseShiftSec ? baseShiftSec : accumulatedWork),
+                ot: formatDuration(accumulatedWork > baseShiftSec ? accumulatedWork - baseShiftSec : 0),
                 break: formatDuration(accumulatedBreak), notes: ""
             };
             
@@ -597,6 +722,15 @@
                 shiftHistory = shiftHistory.filter(s => s.id !== id);
                 saveState();
                 renderHistory();
+            });
+        }
+
+        function triggerNuclearReset() {
+            showCustomPopup("⚠ NUCLEAR RESET ⚠", "Are you absolutely sure? This will permanently delete ALL shift history and app settings. This cannot be undone.", true, () => {
+                localStorage.removeItem('workTrackerData');
+                localStorage.removeItem('wt_settings');
+                localStorage.removeItem('wt_tutorial_seen');
+                location.reload();
             });
         }
 
@@ -650,7 +784,6 @@
                 showCustomPopup("SirKentC says...", "No history to export.", false, null);
                 return;
             }
-            
             showCustomPopup("SirKentC asks...", "Enter a title for your PDF Report:", true, (customTitle) => {
                 if (customTitle !== null) {
                     generatePDF(customTitle.trim() === "" ? "Official Timesheet Report" : customTitle);
@@ -739,7 +872,6 @@
                 html2canvas:  { scale: 2 },
                 jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
             };
-
             html2pdf().set(opt).from(renderArea).save();
         }
 
@@ -754,6 +886,35 @@
             const reader = new FileReader();
             reader.onload = (ev) => { localStorage.setItem('workTrackerData', ev.target.result); location.reload(); };
             reader.readAsText(e.target.files[0]);
+        }
+
+        function saveSettings() {
+            const shiftHrs = parseFloat(document.getElementById('baseShiftInput').value) || 8;
+            baseShiftSec = shiftHrs * 3600;
+            
+            const selectedTheme = document.getElementById('themeSelect').value;
+            document.body.className = selectedTheme;
+
+            localStorage.setItem('wt_settings', JSON.stringify({
+                baseShiftHrs: shiftHrs,
+                theme: selectedTheme
+            }));
+            updateDisplays();
+        }
+
+        function loadSettings() {
+            const settings = JSON.parse(localStorage.getItem('wt_settings'));
+            if (settings) {
+                const shiftHrs = settings.baseShiftHrs || 8;
+                document.getElementById('baseShiftInput').value = shiftHrs;
+                baseShiftSec = shiftHrs * 3600;
+
+                const theme = settings.theme || 'theme-default';
+                document.getElementById('themeSelect').value = theme;
+                document.body.className = theme;
+            } else {
+                document.body.className = 'theme-default';
+            }
         }
 
         function saveState() { 
@@ -782,8 +943,12 @@
                 }
             } 
 
+            loadSettings();
+
             if (!localStorage.getItem('wt_tutorial_seen')) {
                 showHelp();
+            } else {
+                checkVersion();
             }
             
             manageLiveClock();
