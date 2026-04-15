@@ -204,7 +204,7 @@
 
     <div class="modal-overlay" id="customModal">
         <div class="modal-box">
-            <div class="modal-title">SirKentC</div>
+            <div class="modal-title" id="customModalTitle">SirKentC</div>
             <div class="modal-message" id="customModalMessage"></div>
             <input type="text" id="customModalInput" class="modal-input" style="display:none;" />
             <div class="modal-actions">
@@ -395,7 +395,8 @@
             }
         }
 
-        function showCustomPopup(message, isConfirm, callback, needsInput = false, defaultInput = "") {
+        function showCustomPopup(title, message, isConfirm, callback, needsInput = false, defaultInput = "") {
+            document.getElementById('customModalTitle').textContent = title;
             document.getElementById('customModalMessage').textContent = message;
             document.getElementById('customModalCancel').style.display = isConfirm ? 'inline-block' : 'none';
             
@@ -553,7 +554,7 @@
 
         function endWork() {
             if (currentState === 'idle') {
-                showCustomPopup("You have no active shift to end.", false, null);
+                showCustomPopup("SirKentC says...", "You have no active shift to end.", false, null);
                 return;
             }
             
@@ -562,7 +563,7 @@
             else if (currentState === 'break') accumulatedBreak += Math.floor((now - sessionStart) / 1000);
             
             const timestampId = Date.now();
-            const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+            const dateStr = new Date(timestampId).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
             
             const shift = {
                 id: timestampId, date: dateStr,
@@ -577,7 +578,7 @@
 
         function pureReset() {
             if (currentState === 'idle' && accumulatedWork === 0 && accumulatedBreak === 0) return;
-            showCustomPopup("Wipe the current timer? This will NOT save the shift to your history.", true, wipeTimerToIdle);
+            showCustomPopup("SirKentC warns...", "Are you sure you want to wipe the current timer? This will NOT save the shift to your history.", true, wipeTimerToIdle);
         }
 
         function wipeTimerToIdle() {
@@ -592,7 +593,7 @@
         }
 
         function deleteHistoryItem(id) {
-            showCustomPopup("Permanently delete this shift record?", true, () => {
+            showCustomPopup("SirKentC warns...", "Are you sure you want to permanently delete this shift record?", true, () => {
                 shiftHistory = shiftHistory.filter(s => s.id !== id);
                 saveState();
                 renderHistory();
@@ -621,11 +622,13 @@
 
                 shifts.forEach(s => {
                     const idx = shiftHistory.findIndex(sh => sh.id === s.id);
+                    const shortDate = new Date(s.id).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                    
                     const div = document.createElement('div');
                     div.className = 'history-item';
                     div.innerHTML = `
                         <div class="history-header" onclick="this.parentElement.classList.toggle('active')">
-                            <span class="history-date">${s.date}</span>
+                            <span class="history-date">${shortDate}</span>
                             <span style="font-size: 0.75rem; color: var(--text-muted);">▼</span>
                         </div>
                         <div class="history-body">
@@ -644,11 +647,11 @@
 
         function triggerPDFExport() {
             if (shiftHistory.length === 0) {
-                showCustomPopup("No history to export.", false, null);
+                showCustomPopup("SirKentC says...", "No history to export.", false, null);
                 return;
             }
             
-            showCustomPopup("Enter a title for your PDF Report:", true, (customTitle) => {
+            showCustomPopup("SirKentC asks...", "Enter a title for your PDF Report:", true, (customTitle) => {
                 if (customTitle !== null) {
                     generatePDF(customTitle.trim() === "" ? "Official Timesheet Report" : customTitle);
                 }
@@ -657,7 +660,6 @@
 
         function generatePDF(documentTitle) {
             const renderArea = document.createElement('div');
-            // Hardcoded narrow width to ensure it perfectly fits inside an 8.5" page layout
             renderArea.style.width = '700px'; 
             renderArea.style.padding = '20px';
             renderArea.style.background = '#ffffff';
@@ -699,9 +701,11 @@
                 shifts.forEach(s => {
                     monthTotalWork += durationToHours(s.work);
                     monthTotalOT += durationToHours(s.ot);
+                    const shortDate = new Date(s.id).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+
                     htmlContent += `
                         <tr>
-                            <td style="border: 1px solid #ccc; padding: 10px;">${s.date}</td>
+                            <td style="border: 1px solid #ccc; padding: 10px;">${shortDate}</td>
                             <td style="border: 1px solid #ccc; padding: 10px;">${s.work}</td>
                             <td style="border: 1px solid #ccc; padding: 10px;">${s.ot}</td>
                             <td style="border: 1px solid #ccc; padding: 10px; word-wrap: break-word; white-space: pre-wrap;">${s.notes || '-'}</td>
@@ -720,7 +724,6 @@
                 `;
             }
 
-            // Append Footer
             htmlContent += `
                 <div style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 15px; text-align: center; font-size: 12px; color: #888;">
                     Generated by WorkTracker &nbsp;|&nbsp; App by SirKentC
