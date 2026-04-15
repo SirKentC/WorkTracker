@@ -71,7 +71,6 @@
         .text-break { color: var(--break-color); }
         .text-overtime { color: var(--overtime); }
 
-        /* Updated Hierarchical Controls */
         .controls-primary { margin-bottom: 10px; width: 100%; }
         .controls-secondary { display: flex; gap: 10px; margin-bottom: 15px; width: 100%; }
         
@@ -128,6 +127,9 @@
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000; }
         .modal-box { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 30px; border-radius: 16px; width: 90%; max-width: 400px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); text-align: center; }
         
+        .modal-input { width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: var(--text-main); font-family: var(--base-font); outline: none; transition: border-color 0.2s; text-align: center; font-size: 1rem; }
+        .modal-input:focus { border-color: var(--accent); background: rgba(0,0,0,0.4); }
+
         .modal-box.help-box { max-width: 550px; text-align: left; max-height: 85vh; overflow-y: auto; }
         .help-box::-webkit-scrollbar { width: 6px; }
         .help-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
@@ -140,8 +142,8 @@
         kbd { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-bottom: 2px solid rgba(255,255,255,0.3); border-radius: 4px; padding: 2px 6px; font-family: monospace; color: var(--accent); font-size: 0.8rem; }
 
         .modal-title { font-size: 1.2rem; color: var(--text-main); margin-bottom: 10px; font-weight: 600; }
-        .modal-message { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px; line-height: 1.5; }
-        .modal-actions { display: flex; gap: 15px; justify-content: center; margin-top: 20px;}
+        .modal-message { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; line-height: 1.5; }
+        .modal-actions { display: flex; gap: 15px; justify-content: center; margin-top: 10px;}
         .help-box .modal-actions { justify-content: flex-end; position: sticky; bottom: 0; background: var(--glass-bg); padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
         
         .modal-btn { padding: 10px 20px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 0.9rem; }
@@ -204,6 +206,7 @@
         <div class="modal-box">
             <div class="modal-title">▶ Trainer SirKentC says...</div>
             <div class="modal-message" id="customModalMessage"></div>
+            <input type="text" id="customModalInput" class="modal-input" style="display:none;" />
             <div class="modal-actions">
                 <button class="modal-btn modal-btn-cancel" id="customModalCancel" onclick="closeModal()">Cancel</button>
                 <button class="modal-btn modal-btn-confirm" id="customModalConfirm">OK</button>
@@ -294,7 +297,7 @@
                 <div id="historyContainer"></div>
 
                 <div class="data-mgmt">
-                    <button class="btn-data btn-pdf" onclick="generatePDF()">↓ Export PDF</button>
+                    <button class="btn-data btn-pdf" onclick="triggerPDFExport()">↓ Export PDF</button>
                     <button class="btn-data" onclick="exportData()">↓ JSON Backup</button>
                     <button class="btn-data" onclick="document.getElementById('fileInput').click()">↑ JSON Restore</button>
                     <input type="file" id="fileInput" style="display:none" onchange="importData(event)" accept=".json">
@@ -335,8 +338,14 @@
         }
 
         document.addEventListener('keydown', (e) => {
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-            if (e.code === 'Space') {
+            if (e.target.tagName === 'INPUT' && e.target.id !== 'customModalInput') return;
+            if (e.target.tagName === 'TEXTAREA') return;
+
+            if (e.code === 'Enter' && customModal.style.display === 'flex') {
+                document.getElementById('customModalConfirm').click();
+            }
+
+            if (e.code === 'Space' && e.target.id !== 'customModalInput') {
                 e.preventDefault(); 
                 if (helpModal.style.display !== 'flex' && customModal.style.display !== 'flex') {
                     toggleState();
@@ -386,11 +395,21 @@
             }
         }
 
-        function showCustomPopup(message, isConfirm, callback) {
+        function showCustomPopup(message, isConfirm, callback, needsInput = false, defaultInput = "") {
             document.getElementById('customModalMessage').textContent = message;
             document.getElementById('customModalCancel').style.display = isConfirm ? 'inline-block' : 'none';
+            
+            const inputEl = document.getElementById('customModalInput');
+            if (needsInput) {
+                inputEl.style.display = 'block';
+                inputEl.value = defaultInput;
+            } else {
+                inputEl.style.display = 'none';
+            }
+
             confirmActionCallback = callback;
             customModal.style.display = 'flex';
+            if (needsInput) inputEl.focus();
         }
 
         function closeModal() {
@@ -399,7 +418,10 @@
         }
 
         document.getElementById('customModalConfirm').addEventListener('click', () => {
-            if (confirmActionCallback) confirmActionCallback();
+            const inputEl = document.getElementById('customModalInput');
+            const inputValue = inputEl.style.display === 'block' ? inputEl.value : null;
+
+            if (confirmActionCallback) confirmActionCallback(inputValue);
             closeModal();
         });
 
@@ -620,13 +642,20 @@
             }
         }
 
-        function generatePDF() {
+        function triggerPDFExport() {
             if (shiftHistory.length === 0) {
                 showCustomPopup("No history to export.", false, null);
                 return;
             }
+            
+            showCustomPopup("Enter a title for your PDF Report:", true, (customTitle) => {
+                if (customTitle !== null) {
+                    generatePDF(customTitle.trim() === "" ? "Official Timesheet Report" : customTitle);
+                }
+            }, true, "Official Timesheet Report");
+        }
 
-            // Create a detached container for guaranteed rendering
+        function generatePDF(documentTitle) {
             const renderArea = document.createElement('div');
             renderArea.style.width = '800px';
             renderArea.style.padding = '40px';
@@ -636,9 +665,9 @@
 
             let htmlContent = `
                 <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 15px;">
-                    <h1 style="color: #000; font-size: 24px; margin-bottom: 5px; margin-top: 0;">SirKentC Studio</h1>
-                    <p style="margin: 0; font-size: 14px;">Official Timesheet Report</p>
-                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #555;">Generated: ${new Date().toLocaleDateString('en-US')}</p>
+                    <h1 style="color: #000; font-size: 24px; margin-bottom: 5px; margin-top: 0;">${documentTitle}</h1>
+                    <p style="margin: 0; font-size: 14px;">Generated by SirKentC WorkTracker</p>
+                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #555;">Date: ${new Date().toLocaleDateString('en-US')}</p>
                 </div>
             `;
 
@@ -652,13 +681,13 @@
             for (const [month, shifts] of Object.entries(groupedShifts)) {
                 htmlContent += `<h2 style="font-size: 18px; margin-bottom: 10px; color: #000;">${month}</h2>`;
                 htmlContent += `
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px;">
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px; table-layout: fixed;">
                         <thead>
                             <tr>
-                                <th style="border: 1px solid #ccc; padding: 10px; text-align: left; background: #f4f4f4; font-weight: bold;">Date</th>
-                                <th style="border: 1px solid #ccc; padding: 10px; text-align: left; background: #f4f4f4; font-weight: bold;">Work Hours</th>
-                                <th style="border: 1px solid #ccc; padding: 10px; text-align: left; background: #f4f4f4; font-weight: bold;">Overtime</th>
-                                <th style="border: 1px solid #ccc; padding: 10px; text-align: left; background: #f4f4f4; font-weight: bold;">Notes</th>
+                                <th style="border: 1px solid #ccc; padding: 10px; text-align: left; background: #f4f4f4; font-weight: bold; width: 20%;">Date</th>
+                                <th style="border: 1px solid #ccc; padding: 10px; text-align: left; background: #f4f4f4; font-weight: bold; width: 15%;">Work Hours</th>
+                                <th style="border: 1px solid #ccc; padding: 10px; text-align: left; background: #f4f4f4; font-weight: bold; width: 15%;">Overtime</th>
+                                <th style="border: 1px solid #ccc; padding: 10px; text-align: left; background: #f4f4f4; font-weight: bold; width: 50%;">Notes</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -675,7 +704,7 @@
                             <td style="border: 1px solid #ccc; padding: 10px;">${s.date}</td>
                             <td style="border: 1px solid #ccc; padding: 10px;">${s.work}</td>
                             <td style="border: 1px solid #ccc; padding: 10px;">${s.ot}</td>
-                            <td style="border: 1px solid #ccc; padding: 10px;">${s.notes || '-'}</td>
+                            <td style="border: 1px solid #ccc; padding: 10px; word-wrap: break-word; white-space: pre-wrap;">${s.notes || '-'}</td>
                         </tr>
                     `;
                 });
